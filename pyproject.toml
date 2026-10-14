@@ -1,0 +1,87 @@
+[project]
+name = "inverse"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Troy N. Smith", email = "troy.smith@uga.edu" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fuellib",
+    "gif>=23.3.0",
+    "jax>=0.11.2",
+    "jaxtyping>=0.3.11",
+    "optax>=0.2.8",
+    "pydantic>=2.14.1",
+    "taskipy>=1.14.1",
+]
+
+[project.scripts]
+
+[project.optional-dependencies]
+docs = [
+    "keepachangelog>=2.0.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.9,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+fuellib = { path = "../FuelLib", editable = true }
+
+[dependency-groups]
+dev = [
+    "import-linter>=2.15",
+    "keepachangelog>=2.0.0",
+    "lefthook>=2.2.2",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.0",
+    "sphinx>=9.1.0",
+    "sphinx-rtd-theme>=3.1.0",
+    "sphinxcontrib-bibtex>=2.7.0",
+    "taskipy>=1.14.1",
+    "ty>=0.0.87",
+]
+
+# Developer tasks
+[tool.taskipy.tasks]
+# Individual tasks for pre-commit hooks
+format = { cmd = "ruff format", help = "Format codebase" }
+lint = { cmd = "ruff check --fix", help = "Format codebase" }
+types = { cmd = "ty check", help = "Format codebase" }
+imports = { cmd = "lint-imports", help = "Check import contracts" }
+test = { cmd = "pytest", help = "Run test suite" }
+# Pre-commit hooks (see lefthook.yaml)
+pre-commit = { cmd = "lefthook run pre-commit", help = "Run pre-commit suite" }
+# Build and view docs
+build-docs = { cmd = "sphinx-build -M html docs/ docs/_build", help = "Build docs with sphinx" }
+view-docs = { cmd = "bash fuellib/cli/view-docs.sh", help = "View docs built with sphinx" }
+
+
+# Ty configurations
+[tool.ty.environment]
+python = ".venv"
+extra-paths = ["../FuelLib"]
+
+[tool.ty.src]
+include = [
+    "src",
+    "tests",
+]
+
+# Import-linter configurations
+[tool.importlinter]
+root_package = "inverse"
+
+[[tool.importlinter.contracts]]
+name = "Inverse layered architecture"
+type = "layers"
+containers = ["inverse"]
+layers = [
+    "output | optimize",
+    "problem",
+    "mix | models | plot | utils",
+]

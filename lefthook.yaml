@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: false
+  exclude:
+    - .venv/
+  commands:
+    1-fmt:
+      run: uv run ruff format
+
+    2-lint:
+      run: uv run ruff check --fix
+
+    3-types:
+      run: uv run ty check
+
+    4-imports:
+      run: uv run lint-imports
+
+    5-test:
+      run: uv run pytest
+
+    6-check-clean:
+      run: git diff --exit-code
