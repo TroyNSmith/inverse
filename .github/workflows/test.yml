@@ -1,0 +1,42 @@
+name: test
+
+on: 
+  push:
+    branches-ignore:
+      - template
+  pull_request:
+    branches-ignore:
+      - template
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Format
+        run: uv run ruff format
+
+      - name: Lint
+        run: uv run ruff check --fix
+
+      - name: Type check
+        run: uv run ty check
+
+      - name: Imports
+        run: uv run lint-imports
+
+      - name: Test
+        run: uv run pytest
+
+      - name: Check for clean working directory
+        run: git diff --exit-code

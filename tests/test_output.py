@@ -9,7 +9,7 @@ import pytest
 from PIL import GifImagePlugin, Image
 
 from inverse.models import Result
-from inverse.output import save, summary
+from inverse.output import plot_property, save, summary
 from inverse.problem import Problem
 
 
@@ -75,3 +75,17 @@ def test_save_creates_missing_output_dir(
     out = tmp_path / "nested" / "out"
     save(binary_problem, _result(binary_problem, 2, []), out, n_frames=10)
     assert _n_frames(out / "composition.gif") == 2
+
+
+def test_plot_property(binary_problem: Problem, tmp_path: Path) -> None:
+    """Test that a single property GIF is returned and saved."""
+    result = _result(binary_problem, 12, [])
+    image = plot_property(binary_problem, result, "density", tmp_path, n_frames=4)
+    assert isinstance(image.data, bytes)
+    assert _n_frames(tmp_path / "density.gif") == 4
+
+
+def test_plot_property_unknown_name(binary_problem: Problem) -> None:
+    """Test that an unknown property name is rejected."""
+    with pytest.raises(ValueError, match="Unknown property"):
+        plot_property(binary_problem, _result(binary_problem, 2, []), "bogus")

@@ -32,10 +32,7 @@ args = parser.parse_args()
 
 # -------------------------------------------------------------------------------------
 config = Config(
-    # Constraint weights: relative scaling of each constraint's penalty (0 disables
-    # it). Constraints are enforced by an augmented Lagrangian, so these only affect
-    # how quickly each constraint is pushed towards feasibility, not whether it is met.
-    density_weight=50.0
+    density_weight=1.0,
 )
 # -------------------------------------------------------------------------------------
 

@@ -1,5 +1,6 @@
 """Tests for inverse.plot."""
 
+from io import BytesIO
 from pathlib import Path
 
 import numpy as np
@@ -17,10 +18,42 @@ def _history(fuel: Fuel, steps: list[int]) -> DataFrame:
     return DataFrame(rows, index=steps, columns=fuel.compounds)
 
 
-def _n_frames(path: Path) -> int:
-    with Image.open(path) as im:
+def _n_frames(path: Path | bytes) -> int:
+    with Image.open(BytesIO(path) if isinstance(path, bytes) else path) as im:
         assert isinstance(im, GifImagePlugin.GifImageFile)
         return im.n_frames
+
+
+def test_composition_returns_without_saving(
+    binary_fuel: Fuel, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Test that the composition GIF is returned and nothing is saved."""
+    monkeypatch.chdir(tmp_path)
+    steps = [0, 3]
+    image = plot.composition(
+        binary_fuel, _history(binary_fuel, steps), Series([1.0, 0.5], index=steps)
+    )
+    assert isinstance(image.data, bytes)
+    assert _n_frames(image.data) == len(steps)
+    assert not any(tmp_path.iterdir())
+
+
+def test_mixture_property_returns_without_saving(
+    binary_fuel: Fuel, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Test that a property GIF is returned and nothing is saved."""
+    monkeypatch.chdir(tmp_path)
+    steps = [0, 3]
+    image = plot.mixture_property(
+        binary_fuel,
+        _history(binary_fuel, steps),
+        Series([1.0, 2.0], index=steps),
+        "prop",
+        "Prop [-]",
+    )
+    assert isinstance(image.data, bytes)
+    assert _n_frames(image.data) == len(steps)
+    assert not any(tmp_path.iterdir())
 
 
 def test_composition_multiple_families(jet_fuel: Fuel, tmp_path: Path) -> None:

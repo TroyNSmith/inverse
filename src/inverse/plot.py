@@ -1,11 +1,12 @@
 """Plotting utilities for inverse fuel design."""
 
 from collections.abc import Callable
+from io import BytesIO
 from pathlib import Path
 
-import gif
 import numpy as np
 from fuellib import Fuel
+from IPython import display
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -24,17 +25,35 @@ FAMILY_COLORS = {
 }
 
 
-def _save_gif(frames: list[Image.Image], path: Path) -> None:
-    """Quantize frames to one shared palette and save them as a GIF.
+def _gif(frames: list[Image.Image], path: Path | None) -> display.Image:
+    """Encode frames as a GIF, optionally saving it.
 
     Args:
         frames: RGB frames.
-        path: Output GIF path.
+        path: Output GIF path, or `None` to skip saving.
+
+    Returns:
+        The animated GIF (displays inline in Jupyter).
     """
     # A single shared palette makes GIF encoding much faster.
     palette = frames[-1].quantize(colors=64, method=Image.Quantize.MEDIANCUT)
     quantized = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
-    gif.save(quantized, str(path), duration=100)
+    buffer = BytesIO()
+    quantized[0].save(
+        buffer,
+        format="GIF",
+        save_all=True,
+        append_images=quantized[1:],
+        optimize=True,
+        duration=100,
+        disposal=0,
+        loop=0,
+    )
+    data = buffer.getvalue()
+    if path is not None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+    return display.Image(data=data, format="gif")
 
 
 def _grab(canvas: FigureCanvasAgg) -> Image.Image:
@@ -101,12 +120,12 @@ def _composition_panel(
             )
         )
     ax.set_yscale("log")
-    ax.set_xlabel("Carbon Number", fontsize=14)
-    ax.set_ylabel("Weight %", fontsize=14)
-    ax.set_xticks(nC_values, [str(n) for n in nC_values], fontsize=12)
+    ax.set_xlabel("Carbon Number", fontsize=18)
+    ax.set_ylabel("Weight %", fontsize=18)
+    ax.set_xticks(nC_values, [str(n) for n in nC_values], fontsize=14)
     ax.set_xlim(nC_values.min() - 0.5, nC_values.max() + 0.5)
     ax.set_ylim(ymin, ymax)
-    ax.tick_params(axis="y", labelsize=12)
+    ax.tick_params(axis="y", labelsize=14)
     ax.grid(axis="y", alpha=0.3, which="both")
     handles: list[Artist] = [
         Rectangle((0, 0), 1, 1, fc=FAMILY_COLORS[f]) for f in families
@@ -135,21 +154,24 @@ def _composition_legend(
         loc="lower center",
         bbox_to_anchor=(box.x0 + box.width / 2, 0.01),
         ncol=len(labels),
-        fontsize=12,
+        fontsize=14,
     )
 
 
-def composition(fuel: Fuel, Y_hist: DataFrame, loss_hist: Series, out: Path) -> None:
+def composition(
+    fuel: Fuel, Y_hist: DataFrame, loss_hist: Series, out: Path | None = None
+) -> display.Image:
     """Plot the composition history by hydrocarbon family and carbon number.
 
     Args:
         fuel: Fuel providing carbon numbers, families and base composition.
         Y_hist: Composition history (index: step, columns: compounds).
         loss_hist: Loss at each step in `Y_hist`.
-        out: Output directory for the GIF.
-    """
-    out.mkdir(parents=True, exist_ok=True)
+        out: Output directory for `composition.gif`, or `None` to skip saving.
 
+    Returns:
+        The animated GIF (displays inline in Jupyter).
+    """
     # Build the figure once and only update bar heights per frame.
     fig = Figure(figsize=(10, 6), dpi=100)
     canvas = FigureCanvasAgg(fig)
@@ -170,7 +192,7 @@ def composition(fuel: Fuel, Y_hist: DataFrame, loss_hist: Series, out: Path) -> 
         fig.draw_artist(title)
         frames.append(_grab(canvas))
 
-    _save_gif(frames, out / "composition.gif")
+    return _gif(frames, None if out is None else out / "composition.gif")
 
 
 def mixture_property(
@@ -179,10 +201,10 @@ def mixture_property(
     property_hist: Series,
     name: str,
     label: str,
-    out: Path,
+    out: Path | None = None,
     lower: float | None = None,
     upper: float | None = None,
-) -> None:
+) -> display.Image:
     """Plot the history of a single mixture property alongside the composition.
 
     Args:
@@ -192,12 +214,13 @@ def mixture_property(
         property_hist: Property value at each step (index: step).
         name: Property name; the GIF is saved as `out / f"{name}.gif"`.
         label: Y-axis label (including units).
-        out: Output directory for the GIF.
+        out: Output directory for the GIF, or `None` to skip saving.
         lower: Lower limit of the property, if any.
         upper: Upper limit of the property, if any.
-    """
-    out.mkdir(parents=True, exist_ok=True)
 
+    Returns:
+        The animated GIF (displays inline in Jupyter).
+    """
     steps = property_hist.index.to_numpy()
     values = property_hist.to_numpy()
     limits = [v for v in (lower, upper) if v is not None]
@@ -223,9 +246,9 @@ def mixture_property(
     ax.set_xscale("symlog", linthresh=1)
     ax.set_xlim(0, max(steps[-1], 1))
     ax.set_ylim(ymin, ymax)
-    ax.set_xlabel("Step", fontsize=14)
-    ax.set_ylabel(label, fontsize=14)
-    ax.tick_params(labelsize=12)
+    ax.set_xlabel("Step", fontsize=18)
+    ax.set_ylabel(label, fontsize=18)
+    ax.tick_params(labelsize=14)
     ax.grid(alpha=0.3)
     draw_composition, handles, labels = _composition_panel(ax_comp, fuel, Y_hist)
     title = fig.suptitle("", fontsize=14, animated=True)
@@ -245,4 +268,4 @@ def mixture_property(
         fig.draw_artist(title)
         frames.append(_grab(canvas))
 
-    _save_gif(frames, out / f"{name}.gif")
+    return _gif(frames, None if out is None else out / f"{name}.gif")

@@ -11,7 +11,7 @@ from .models import Result
 from .problem import Problem
 
 
-def solve(problem: Problem, max_steps: int) -> Result:
+def solve(problem: Problem, max_steps: int = 10_000) -> Result:
     """Minimize the sparsity objective subject to the property constraints.
 
     Approximately minimizes the Lagrangian for fixed multipliers (inner loop),
@@ -21,6 +21,7 @@ def solve(problem: Problem, max_steps: int) -> Result:
     Args:
         problem: Inverse design problem.
         max_steps: Max optimization steps.
+            Default is 10,000.
 
     Returns:
         Optimization result and history.
