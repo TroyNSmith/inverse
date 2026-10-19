@@ -77,12 +77,12 @@ class TestAccuracy(unittest.TestCase):
         for name in self.fuel_names:
             fuel = Fuel(name)
             with self.subTest(fuel=name, property="flash_point"):
-                Tflash_ref = correlate.mixture.flash_point_alibashki(fuel).m_as(
+                Tflash_ref = correlate.mixture.flash_point_alibakhshi(fuel).m_as(
                     "celsius"
                 )
                 Yi = jnp.asarray(fuel.Y_0.m_as(""))
                 Tflash_i = jnp.asarray(
-                    correlate.components.flash_point_alibashki(fuel).m_as("celsius")
+                    correlate.components.flash_point_alibakhshi(fuel).m_as("celsius")
                 )
                 Tflash_inv = mix.flash_point(fuel, Yi, Tflash_i)
                 self.assertAlmostEqual(Tflash_ref, float(Tflash_inv), places=PLACES)

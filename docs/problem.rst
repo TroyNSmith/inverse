@@ -40,7 +40,7 @@ from them with the mixing rules in :doc:`mix`.
    :math:`\rho_i`            15 °C              kg/m\ :sup:`3`  ``Fuel.density``
    :math:`\nu_i`             -20 °C, -40 °C     mm\ :sup:`2`/s  ``Fuel.viscosity_kinematic``
    :math:`LHV_i`             --                 MJ/kg           ``components.lower_heating_value``
-   :math:`T_{fp,i}`          --                 °C              ``components.flash_point_alibashki``\ :footcite:p:`alibakhshi_modified_2015`
+   :math:`T_{fp,i}`          --                 °C              ``components.flash_point_alibakhshi``\ :footcite:p:`alibakhshi_modified_2015`
    :math:`C_{\ell,i}`        298.15 K           J/(g K)         ``components.liquid_mass_specific_heat_capacity_ruzicka``\ :footcite:p:`ruzicka_estimation_1993`
    ========================  =================  ==============  ============================================================================
 

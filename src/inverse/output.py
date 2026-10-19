@@ -157,7 +157,7 @@ Density: {mixture.density(fuel, RHO_15_T, Yi):.4g}
 Viscosity(-20°C): {nu_minus20:.4g}
 Viscosity(-40°C): {nu_minus40:.4g}
 Heat of combustion: {mixture.heat_of_combustion(fuel, Yi).to("MJ/kg"):.4g}
-Flash point: {mixture.flash_point_alibashki(fuel, Yi).to("celsius"):.4g}
+Flash point: {mixture.flash_point_alibakhshi(fuel, Yi).to("celsius"):.4g}
 Freezing point: {mixture.freeze_point_boehm(fuel, Yi).to("celsius"):.4g}
 Aromatics(vol%): {mix.aromatics_content(fuel, result.Yi, problem.rho_15_i):.4g}
 """

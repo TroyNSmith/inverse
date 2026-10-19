@@ -44,7 +44,7 @@ class Problem:
         )
         self.LHV_i = jnp.asarray(components.lower_heating_value(fuel).m_as("MJ/kg"))
         self.Tflash_i = jnp.asarray(
-            components.flash_point_alibashki(fuel).m_as("celsius")
+            components.flash_point_alibakhshi(fuel).m_as("celsius")
         )
         self.Cl_i = jnp.asarray(
             components.liquid_mass_specific_heat_capacity_ruzicka(fuel, CL_T).m_as(

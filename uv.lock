@@ -516,8 +516,8 @@ wheels = [
 
 [[package]]
 name = "fuellib"
-version = "3.0.6"
-source = { editable = "../FuelLib" }
+version = "3.0.8a3"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "matplotlib" },
     { name = "numpy" },
@@ -529,35 +529,10 @@ dependencies = [
     { name = "scipy" },
     { name = "uncertainties" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "codespell", marker = "extra == 'dev'", specifier = ">=2.2.0" },
-    { name = "import-linter", marker = "extra == 'dev'", specifier = ">=2.13" },
-    { name = "importlib-resources", marker = "python_full_version < '3.9'", specifier = ">=5.0" },
-    { name = "keepachangelog", marker = "extra == 'dev'", specifier = ">=2.0.0" },
-    { name = "lefthook", marker = "extra == 'dev'", specifier = ">=2.1.11" },
-    { name = "matplotlib", specifier = ">=3.0" },
-    { name = "numpy", specifier = ">=1.19.0" },
-    { name = "pandas", specifier = ">=1.0.0" },
-    { name = "pint", specifier = ">=0.26.1" },
-    { name = "pydantic", specifier = ">=2.13.5" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=6.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.1.0" },
-    { name = "pyyaml", specifier = ">=5.0" },
-    { name = "rdkit", specifier = ">=2022.3.1" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.16.4" },
-    { name = "scipy", specifier = ">=1.5.0" },
-    { name = "sphinx", marker = "extra == 'dev'", specifier = ">=4.0" },
-    { name = "sphinx-autodoc-typehints", marker = "extra == 'dev'", specifier = ">=3.13.7" },
-    { name = "sphinx-rtd-theme", marker = "extra == 'dev'", specifier = ">=1.0" },
-    { name = "sphinxcontrib-bibtex", marker = "extra == 'dev'", specifier = ">=2.0" },
-    { name = "taskipy", marker = "extra == 'dev'", specifier = ">=1.14.1" },
-    { name = "ty", marker = "extra == 'dev'", specifier = ">=0.0.74" },
-    { name = "uncertainties", specifier = ">=3.2.3" },
-    { name = "uv", marker = "extra == 'dev'", specifier = ">=0.12.6" },
+sdist = { url = "https://files.pythonhosted.org/packages/3f/d4/cd17b666869a1af245b6224ea886c2a3c3450bddb0e4f1e20de61279fb9e/fuellib-3.0.8a3.tar.gz", hash = "sha256:199284d30584abfbf8db43d4073836ae1fa8c1dbac7e439fb11e72637ed3fbf3", size = 90302, upload-time = "2026-10-16T14:35:28.021Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cf/32/0ad05dceafadfea150e517aedb222d3a3cc7adb55372644947ff8d0eaa62/fuellib-3.0.8a3-py3-none-any.whl", hash = "sha256:a18d7bcf4fe3e061ab5217e9e676c189812dd1924561917cc55ef688aee88bd7", size = 93622, upload-time = "2026-10-16T14:35:26.321Z" },
 ]
-provides-extras = ["dev"]
 
 [[package]]
 name = "gif"
@@ -701,7 +676,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "fuellib", editable = "../FuelLib" },
+    { name = "fuellib", specifier = "==3.0.8a3" },
     { name = "gif", specifier = ">=23.3.0" },
     { name = "ipykernel", specifier = ">=7.4.0" },
     { name = "jax", specifier = ">=0.11.2" },
