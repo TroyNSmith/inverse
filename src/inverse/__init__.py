@@ -1,6 +1,6 @@
 """FuelLib inverse fuel design package."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from . import mix, models, optimize, output, plot, problem, utils
 from .models import Config
