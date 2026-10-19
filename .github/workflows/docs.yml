@@ -17,19 +17,21 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: prefix-dev/setup-pixi@v0.9.3
+      - uses: astral-sh/setup-uv@v7
         with:
-          cache: true
-          environments: dev
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync
 
       - name: Build documentation site
-        run: pixi run docs-build
+        run: uv run task build-docs
 
       - name: Upload documentation site as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v4
         with:
-          path: docs/build/
+          path: docs/_build/html/
 
   deploy:
     needs: build
